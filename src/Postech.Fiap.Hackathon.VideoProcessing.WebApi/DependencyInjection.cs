@@ -1,10 +1,21 @@
 using System.Reflection;
-using Carter.OpenApi;
+using System.Text.Json.Serialization;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.Behavior;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Authentication.Models;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence;
+using Serilog;
+using Serilog.Events;
+using Serilog.Exceptions;
+using Serilog.Filters;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi;
 
@@ -20,8 +31,47 @@ public static class DependencyInjection
 
         services.AddSwaggerConfiguration();
         services.AddIdentityConfiguration();
+        services.AddMediatRConfiguration();
+        services.AddOpenTelemetryConfiguration();
+        services.AddJsonOptionsConfiguration();
+
+        services.AddProblemDetails();
+        services.AddCarter();
+
+        services.AddExceptionHandler<GlobalExceptionHandler>();
+        services.AddUseHealthChecksConfiguration(configuration);
+        services.AddValidatorsFromAssembly(Assembly);
 
         return services;
+    }
+
+    private static void AddMediatRConfiguration(this IServiceCollection services)
+    {
+        services.AddMediatR(config => config.RegisterServicesFromAssembly(Assembly));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingPipelineBehavior<,>));
+        services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationPipelineBehavior<,>));
+    }
+
+    private static void AddOpenTelemetryConfiguration(this IServiceCollection services)
+    {
+        var serviceName = $"{Assembly.GetName().Name}-{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}";
+        services.AddOpenTelemetry()
+            .ConfigureResource(resourceBuilder => resourceBuilder.AddService(serviceName!))
+            .WithMetrics(metrics =>
+            {
+                metrics.AddAspNetCoreInstrumentation();
+                metrics.AddHttpClientInstrumentation();
+
+                metrics.AddOtlpExporter();
+            })
+            .WithTracing(tracing =>
+            {
+                tracing.AddAspNetCoreInstrumentation();
+                tracing.AddEntityFrameworkCoreInstrumentation();
+                tracing.AddHttpClientInstrumentation();
+
+                tracing.AddOtlpExporter();
+            });
     }
 
     private static void AddIdentityConfiguration(this IServiceCollection services)
@@ -45,9 +95,6 @@ public static class DependencyInjection
                 Description = "API para processamento de vídeos",
                 Version = "v1"
             });
-
-            options.DocInclusionPredicate((s, description) =>
-                description.ActionDescriptor.EndpointMetadata.OfType<IIncludeOpenApi>().Any());
 
             options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
@@ -74,5 +121,42 @@ public static class DependencyInjection
                 }
             });
         });
+    }
+
+    public static void AddSerilogConfiguration(this IServiceCollection services,
+        WebApplicationBuilder builder, IConfiguration configuration)
+    {
+        var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+        var applicationName =
+            $"{Assembly.GetName().Name?.ToLower().Replace(".", "-")}-{environment?.ToLower().Replace(".", "-")}";
+
+        Log.Logger = new LoggerConfiguration()
+            .ReadFrom.Configuration(configuration)
+            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            .MinimumLevel.Override("System", LogEventLevel.Information)
+            .Enrich.FromLogContext()
+            .Enrich.WithProperty("ApplicationName", applicationName)
+            .Enrich.WithCorrelationId()
+            .Enrich.WithExceptionDetails()
+            .Filter.ByExcluding(Matching.FromSource("Microsoft.AspNetCore.StaticFiles"))
+            .CreateLogger();
+
+        builder.Logging.ClearProviders();
+        builder.Host.UseSerilog(Log.Logger, true);
+    }
+
+    public static IServiceCollection AddJsonOptionsConfiguration(this IServiceCollection services)
+    {
+        services.ConfigureHttpJsonOptions(options =>
+        {
+            options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+
+        services.Configure<JsonOptions>(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+        });
+
+        return services;
     }
 }
