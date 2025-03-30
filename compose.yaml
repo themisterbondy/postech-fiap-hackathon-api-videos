@@ -14,7 +14,7 @@ services:
       - 'Serilog:WriteTo:1:Args:serverUrl=http://fiap-video-processing-seq:5341'
       - 'OTEL_EXPORTER_OTLP_ENDPOINT=http://fiap-video-processing-seq:5341/ingest/otlp/v1/traces'
       - 'OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf'
-      - 'ConnectionStrings:DefaultConnection=Server=fiap-video-processing-sql-server-dev,1433;Initial Catalog=video-dev;User ID=sa;Password=blueScreen666;TrustServerCertificate=True;MultiSubnetFailover=True'
+      - 'ConnectionStrings:DefaultConnection=Server=sqlserver,1433;Initial Catalog=video-processing-sql-server-dev;User ID=sa;Password=blueScreen666;TrustServerCertificate=True;MultiSubnetFailover=True'
       - 'AzureStorageSettings:ConnectionString=UseDevelopmentStorage=true;DevelopmentStorageProxyUri=http://host.docker.internal'
     ports:
       - "5214:80"
