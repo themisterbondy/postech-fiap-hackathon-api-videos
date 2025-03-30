@@ -1,0 +1,18 @@
+﻿services:
+  postech.fiap.hackathon.videoprocessing.webapi:
+    image: postech.fiap.hackathon.videoprocessing.webapi
+    build:
+      context: .
+      dockerfile: Postech.Fiap.Hackathon.VideoProcessing.WebApi/Dockerfile
+
+  postech.fiap.hackathon.videoprocessing.webapi-1:
+    image: postech.fiap.hackathon.videoprocessing.webapi-1
+    build:
+      context: .
+      dockerfile: Postech.Fiap.Hackathon.VideoProcessing.WebApi/Dockerfile
+
+  postech.fiap.hackathon.videoprocessing.webapi-2:
+    image: postech.fiap.hackathon.videoprocessing.webapi-2
+    build:
+      context: .
+      dockerfile: src/Postech.Fiap.Hackathon.VideoProcessing.WebApi/Dockerfile
