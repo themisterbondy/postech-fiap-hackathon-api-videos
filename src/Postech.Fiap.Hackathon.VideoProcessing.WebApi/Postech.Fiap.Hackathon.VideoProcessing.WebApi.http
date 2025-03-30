@@ -1,6 +1,0 @@
-@Postech.Fiap.Hackathon.VideoProcessing.WebApi_HostAddress = http://localhost:5167
-
-GET {{Postech.Fiap.Hackathon.VideoProcessing.WebApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
