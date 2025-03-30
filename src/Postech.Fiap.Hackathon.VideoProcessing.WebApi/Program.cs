@@ -1,48 +1,67 @@
-namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.Extensions;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Authentication.Models;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence;
 
-public class Program
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(options =>
 {
-    public static void Main(string[] args)
+    options.SwaggerDoc("v1", new OpenApiInfo
     {
-        var builder = WebApplication.CreateBuilder(args);
+        Title = "Fiap Hackathon Video Processing WebApi",
+        Description = "API para processamento de vídeos",
+        Version = "v1"
+    });
 
-        // Add services to the container.
-        builder.Services.AddAuthorization();
+    options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Insira o token JWT no formato: Bearer {seu token}",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
+        BearerFormat = "JWT"
+    });
 
-        // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-        builder.Services.AddOpenApi();
-
-        var app = builder.Build();
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
+    options.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
         {
-            app.MapOpenApi();
-        }
-
-        app.UseHttpsRedirection();
-
-        app.UseAuthorization();
-
-        var summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        app.MapGet("/weatherforecast", (HttpContext httpContext) =>
+            new OpenApiSecurityScheme
             {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                        new WeatherForecast
-                        {
-                            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                            TemperatureC = Random.Shared.Next(-20, 55),
-                            Summary = summaries[Random.Shared.Next(summaries.Length)]
-                        })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast");
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
+    });
+});
 
-        app.Run();
-    }
-}
+builder.Services.AddAuthentication().AddBearerToken(IdentityConstants.BearerScheme);
+builder.Services.AddAuthorization();
+
+builder.Services.AddIdentityCore<User>()
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddApiEndpoints();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+var app = builder.Build();
+
+app.ApplyMigrations();
+app.UseSwagger();
+app.UseSwaggerUI();
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapGroup("/api/auth")
+    .WithTags("Authentication")
+    .MapIdentityApi<User>()
+    .WithDescription("Authentication API");
+app.Run();
