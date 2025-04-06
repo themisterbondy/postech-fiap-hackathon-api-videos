@@ -30,8 +30,13 @@ public static class DependencyInjection
 
     public static IServiceCollection AddWebApi(this IServiceCollection services, IConfiguration configuration)
     {
+        var sqlServerConnectionString = configuration.GetConnectionString("DefaultConnection");
+
         services.AddDbContext<ApplicationDbContext>(options =>
-            options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+        {
+            options.UseSqlServer(sqlServerConnectionString,
+                options => { options.EnableRetryOnFailure(2, TimeSpan.FromSeconds(3), new List<int>()); });
+        });
 
         services.AddSwaggerConfiguration();
         services.AddIdentityConfiguration();
@@ -65,7 +70,6 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IVideoProcessingMessenger, VideoProcessingMessenger>();
-
 
         return services;
     }
