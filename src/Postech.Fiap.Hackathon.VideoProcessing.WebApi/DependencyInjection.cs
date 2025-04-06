@@ -1,10 +1,11 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
-using FluentStorage;
-using FluentStorage.Messaging;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Storage;
+using Microsoft.Azure.Storage.Blob;
+using Microsoft.Azure.Storage.Queue;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Metrics;
@@ -51,25 +52,37 @@ public static class DependencyInjection
         services.AddUseHealthChecksConfiguration(configuration);
         services.AddValidatorsFromAssembly(Assembly);
 
-        services.AddSingleton<IMessenger>(_ =>
+        services.AddSingleton<CloudBlobContainer>(sp =>
         {
-            var accountName = configuration["Azure:Storage:AccountName"];
-            var accountKey = configuration["Azure:Storage:AccountKey"];
+            var connectionString = configuration["Azure:ConnectionString"];
+            var containerName = configuration["Azure:Blob:Container"];
 
-            Uri serviceUri = null;
-            if (!string.IsNullOrEmpty(configuration["Azure:Storage:Queue:ServiceUri"]))
-                serviceUri
-                    = new Uri(configuration["Azure:Storage:Queue:ServiceUri"]);
+            var account = CloudStorageAccount.Parse(connectionString);
+            var blobClient = account.CreateCloudBlobClient();
 
-            var messenger = StorageFactory.Messages.AzureStorageQueue(
-                accountName,
-                accountKey,
-                serviceUri);
+            var container = blobClient.GetContainerReference(containerName);
+            container.CreateIfNotExists();
 
-            return messenger;
+            return container;
         });
 
-        services.AddScoped<IVideoProcessingMessenger, VideoProcessingMessenger>();
+        services.AddScoped<IVideoUploader, VideoUploader>();
+
+        services.AddSingleton<CloudQueue>(_ =>
+        {
+            var connectionString = configuration["Azure:ConnectionString"];
+            var queueName = configuration["Azure:Queue:Name"];
+
+            var account = CloudStorageAccount.Parse(connectionString);
+            var client = account.CreateCloudQueueClient();
+
+            var queue = client.GetQueueReference(queueName);
+            queue.CreateIfNotExists();
+
+            return queue;
+        });
+
+        services.AddScoped<IVideoQueueMessenger, VideoQueueMessenger>();
 
         return services;
     }
