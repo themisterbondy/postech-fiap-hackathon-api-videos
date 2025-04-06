@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+using FluentStorage;
+using FluentStorage.Messaging;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +13,8 @@ using OpenTelemetry.Trace;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.Behavior;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Authentication.Models;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Queue;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence;
 using Serilog;
 using Serilog.Events;
@@ -41,6 +45,27 @@ public static class DependencyInjection
         services.AddExceptionHandler<GlobalExceptionHandler>();
         services.AddUseHealthChecksConfiguration(configuration);
         services.AddValidatorsFromAssembly(Assembly);
+
+        services.AddSingleton<IMessenger>(_ =>
+        {
+            var accountName = configuration["Azure:Storage:AccountName"];
+            var accountKey = configuration["Azure:Storage:AccountKey"];
+
+            Uri serviceUri = null;
+            if (!string.IsNullOrEmpty(configuration["Azure:Storage:Queue:ServiceUri"]))
+                serviceUri
+                    = new Uri(configuration["Azure:Storage:Queue:ServiceUri"]);
+
+            var messenger = StorageFactory.Messages.AzureStorageQueue(
+                accountName,
+                accountKey,
+                serviceUri);
+
+            return messenger;
+        });
+
+        services.AddScoped<IVideoProcessingMessenger, VideoProcessingMessenger>();
+
 
         return services;
     }
