@@ -30,7 +30,6 @@ public class VideoConfiguration : IEntityTypeConfiguration<Video>
             .IsRequired();
 
         builder.Property(v => v.ThumbnailsZipPath)
-            .IsRequired()
             .HasMaxLength(500);
 
         builder.Property(v => v.Status)
