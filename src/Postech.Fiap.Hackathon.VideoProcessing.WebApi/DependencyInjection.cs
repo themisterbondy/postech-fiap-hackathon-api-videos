@@ -66,7 +66,7 @@ public static class DependencyInjection
             return container;
         });
 
-        services.AddScoped<IVideoUploader, VideoUploader>();
+        services.AddScoped<IStorageService, StorageService>();
 
         services.AddSingleton<CloudQueue>(_ =>
         {
