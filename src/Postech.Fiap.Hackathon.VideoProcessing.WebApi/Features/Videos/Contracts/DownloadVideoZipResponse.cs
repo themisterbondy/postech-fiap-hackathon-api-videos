@@ -2,6 +2,7 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contract
 
 public class DownloadVideoZipResponse
 {
-    public IFormFile? File { get; set; }
-
+    public Stream File { get; set; }
+    public string ContentType { get; set; }
+    public string FileName { get; set; }
 }

@@ -5,7 +5,7 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Services;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Queries;
 
-public class GetOrderQueueById
+public class GetStatusVideoById
 {
     public class Query : IRequest<Result<GetStatusVideoResponse>>
     {

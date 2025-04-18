@@ -2,6 +2,6 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contract
 
 public class DownloadVideoZipRequest
 {
-    public string? id { get; set; }
+    public Guid id { get; set; }
 
 }
