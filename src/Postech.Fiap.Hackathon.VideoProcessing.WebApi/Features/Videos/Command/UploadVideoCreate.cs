@@ -16,8 +16,6 @@ public abstract class UploadVideoCreate
     {
         public Guid Id { get; set; }
         public VideoStatus Status { get; set; }
-
-        public IFormFile? File { get; set; }
     }
 
     public class CreateVideotHandler(IVideoRepository videoRepository)

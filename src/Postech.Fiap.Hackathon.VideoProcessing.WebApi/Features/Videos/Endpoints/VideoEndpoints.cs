@@ -3,6 +3,7 @@ using Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Co
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.Extensions;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Queries;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Endpoints;
@@ -32,5 +33,28 @@ public class VideoEndpoints : ICarterModule
             .WithTags("Products")
             .RequireAuthorization()
             .WithOpenApi();
+
+
+        group.MapPost("/upload", async ([FromBody] UploadVideoRequest request, [FromServices] IMediator mediator) =>
+          {
+              var command = new UploadVideoCreate.Command
+              {
+                  Status = VideoStatus.Processing
+              };
+
+              var result = await mediator.Send(command);
+
+              return result.IsSuccess
+                  ? Results.Created($"/Video/{result.Value.Id}", result.Value)
+                  : result.ToProblemDetails();
+          })
+          .WithName("CreateVideo")
+            .Accepts<UploadVideoRequest>("application/zip")
+          .Produces<UploadVideoResponse>(204)
+          .WithTags("Products")
+          .RequireAuthorization()
+          .WithOpenApi();
+
+
     }
 }
