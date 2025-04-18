@@ -35,7 +35,7 @@ public class VideoEndpoints : ICarterModule
             .WithOpenApi();
 
 
-        group.MapPost("/upload", async ([FromBody] UploadVideoRequest request, [FromServices] IMediator mediator) =>
+        group.MapPost("/upload", async ([FromForm] UploadVideoRequest request, [FromServices] IMediator mediator) =>
           {
               var command = new UploadVideoCreate.Command
               {
