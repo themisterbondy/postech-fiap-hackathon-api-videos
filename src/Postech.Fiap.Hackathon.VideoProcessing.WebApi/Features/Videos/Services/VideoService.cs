@@ -39,7 +39,8 @@ public class VideoService(
             Id = Id,
             Status = VideoStatus.Processing,
             FileName = request.File?.FileName,
-            FilePath = upload.Value
+            FilePath = upload.Value,
+            ThumbnailsInterval = request.ThumbnailsInterval
         };
 
         // chamar upload de video

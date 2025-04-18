@@ -8,7 +8,8 @@ public abstract class UploadVideoCreate
 {
     public class Command : IRequest<Result<UploadVideoResponse>>
     {
-        public IFormFile File { get; set; }
+        public int ThumbnailsInterval { get; set; } = 5;
+        public IFormFile? File { get; set; }
     }
 
     public class CreateVideotHandler(IVideoService videoService)
