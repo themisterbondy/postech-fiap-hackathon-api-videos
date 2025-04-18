@@ -12,7 +12,7 @@ public abstract class UploadVideoCreate
 
     public class Command : IRequest<Result<UploadVideoResponse>>
     {
-        public FormFile File { get; set; }
+        public IFormFile File { get; set; }
     }
 
     public class CreateVideotHandler(IVideoService videoService)

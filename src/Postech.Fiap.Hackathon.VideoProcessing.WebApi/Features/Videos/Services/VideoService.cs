@@ -28,33 +28,34 @@ public class VideoService(
     
     public async Task<Result<UploadVideoResponse>> upload(UploadVideoRequest request, CancellationToken cancellationToken)
     {
-        Guid id = Guid.NewGuid();
+        Guid Id = Guid.NewGuid();
 
-        var upload = await storageService.UploadAsync(id, request.File.OpenReadStream(), request.File.ContentType);
+        var upload = await storageService.UploadAsync(Id, request.File.OpenReadStream(), request.File.ContentType);
         // chamar upload de video
         await videoRepository.AddAsync(new Video
         {
-            Id = id,
+            Id = Id,
             Status = VideoStatus.Processing,
             FileName = request.File?.FileName ?? throw new ArgumentNullException(nameof(request.File), "File cannot be null"),
             FilePath = upload.Value
         }); 
 
-        var response = new UploadVideoResponse
-        {
-            Id = id,
-            Status = VideoStatus.Processing
-        };  
+        var response = new UploadVideoResponse(Id, VideoStatus.Processing);  
         return Result<UploadVideoResponse>.Success(response);
     }
     
     public async Task<Result<DownloadVideoZipResponse>> download(DownloadVideoZipRequest request, CancellationToken cancellationToken)
     {
-        var video = await videoRepository.FindByIdAsync(request.id);
+        var video = await videoRepository.FindByIdAsync(request.Id);
 
         if (video == null)
         {
             return Result.Failure<DownloadVideoZipResponse>(Error.Failure("VideoService.DownloadVideoZipResponse", "Video not found"));
+        }
+
+        if (string.IsNullOrEmpty(video.FilePath))
+        {
+            return Result.Failure<DownloadVideoZipResponse>(Error.Failure("VideoService.DownloadVideoZipResponse", "File path is null or empty"));
         }
 
         var streamResult = await storageService.DowloadAsync(video.FilePath);
@@ -65,11 +66,11 @@ public class VideoService(
         }
 
         return new DownloadVideoZipResponse
-        {
-            File = streamResult.Value,
-            ContentType = "application/zip",
-            FileName = $"{video.FileName}.zip"
-        };  
+        (
+            streamResult.Value,
+             "application/zip",
+             $"{video.FileName}.zip"
+        );  
 
     }   
 }

@@ -39,7 +39,7 @@ public class VideoEndpoints : ICarterModule
           {
               var command = new UploadVideoCreate.Command
               {
-                  Status = VideoStatus.Processing
+                  File = request.File as FormFile ?? throw new ArgumentNullException(nameof(request.File), "File cannot be null")
               };
 
               var result = await mediator.Send(command);
@@ -55,17 +55,17 @@ public class VideoEndpoints : ICarterModule
           .RequireAuthorization()
           .WithOpenApi();
 
-               group.MapGet("/upload", async ([FromBody] DownloadVideoZipRequest request, [FromServices] IMediator mediator) =>
+               group.MapGet("/download", async ([FromBody] DownloadVideoZipRequest request, [FromServices] IMediator mediator) =>
           {
-              var command = new UploadVideoCreate.Command
+              var command = new DownloadVideo.Command
               {
-                  Status = VideoStatus.Processing
+                Id = request.Id
               };
 
               var result = await mediator.Send(command);
 
               return result.IsSuccess
-                  ? Results.Created($"/Video/{result.Value.Id}", result.Value)
+                  ? Results.Created($"/Video/{result.Value.FileName}", result.Value)
                   : result.ToProblemDetails();
           })
           .WithName("CreateVideo")
