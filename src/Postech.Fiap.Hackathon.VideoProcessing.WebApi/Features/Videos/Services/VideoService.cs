@@ -99,13 +99,13 @@ public class VideoService(
                 "Video not found"));
         }
 
-        if (string.IsNullOrEmpty(video.FilePath))
+        if (string.IsNullOrEmpty(video.ThumbnailsZipPath))
         {
             return Result.Failure<DownloadVideoZipResponse>(Error.Failure("VideoService.DownloadVideoZipResponse",
                 "File path is null or empty"));
         }
 
-        var streamResult = await storageService.DowloadAsync(video.FilePath);
+        var streamResult = await storageService.DowloadAsync(video.ThumbnailsZipPath);
 
         if (!streamResult.IsSuccess)
         {
