@@ -1,10 +1,8 @@
 using FluentValidation;
-using OpenTelemetry.Trace;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.Validation;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
-using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;
-using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Repositories;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Services;
 
 namespace Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 
@@ -14,32 +12,23 @@ public abstract class UploadVideoCreate
 
     public class Command : IRequest<Result<UploadVideoResponse>>
     {
-        public Guid Id { get; set; }
-        public VideoStatus Status { get; set; }
+        public FormFile File { get; set; }
     }
 
-    public class CreateVideotHandler(IVideoRepository videoRepository)
+    public class CreateVideotHandler(IVideoService videoService)
            : IRequestHandler<Command, Result<UploadVideoResponse>>
     {
         public async Task<Result<UploadVideoResponse>> Handle(Command request, CancellationToken cancellationToken)
         {
-            await videoRepository.AddAsync(
-                  Video.Create(
-                    Guid.NewGuid(),
-                    0 // Replace with appropriate value for ThumbnailsInterval
-                ));
-            return Result.Success(new UploadVideoResponse());
+            var uploadRequest = new UploadVideoRequest
+            {
+                File = request.File
+            };
+
+            var response = await videoService.upload(uploadRequest, cancellationToken);
+
+            return Result.Success(new UploadVideoResponse(response.Value.Id,response.Value.Status));
         }
     }
 
-    public class UpdateVideoValidator : AbstractValidator<Command>
-    {
-        public UpdateVideoValidator()
-        {
-            RuleFor(x => x.Id)
-                .NotEmpty().WithError(Error.Validation("Id", "ID is required."));
-            RuleFor(x => x.Status)
-                .IsInEnum().WithError(Error.Validation("Category", "Category is invalid."));
-        }
-    }
 }

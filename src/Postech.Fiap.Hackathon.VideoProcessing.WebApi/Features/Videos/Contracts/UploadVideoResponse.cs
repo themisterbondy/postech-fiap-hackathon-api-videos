@@ -7,5 +7,10 @@ public class UploadVideoResponse
 {
     public Guid Id { get; set; }
     public VideoStatus Status { get; set; }
+    public UploadVideoResponse(Guid id, VideoStatus status)
+    {
+        Id = id;
+        Status = status;
+    }
 
 }

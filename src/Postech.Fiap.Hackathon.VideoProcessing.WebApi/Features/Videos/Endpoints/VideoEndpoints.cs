@@ -55,6 +55,27 @@ public class VideoEndpoints : ICarterModule
           .RequireAuthorization()
           .WithOpenApi();
 
+               group.MapGet("/upload", async ([FromBody] DownloadVideoZipRequest request, [FromServices] IMediator mediator) =>
+          {
+              var command = new UploadVideoCreate.Command
+              {
+                  Status = VideoStatus.Processing
+              };
+
+              var result = await mediator.Send(command);
+
+              return result.IsSuccess
+                  ? Results.Created($"/Video/{result.Value.Id}", result.Value)
+                  : result.ToProblemDetails();
+          })
+          .WithName("CreateVideo")
+            .Accepts<UploadVideoRequest>("application/zip")
+          .Produces<UploadVideoResponse>(204)
+          .WithTags("Products")
+          .RequireAuthorization()
+          .WithOpenApi();
+
+
 
     }
 }
