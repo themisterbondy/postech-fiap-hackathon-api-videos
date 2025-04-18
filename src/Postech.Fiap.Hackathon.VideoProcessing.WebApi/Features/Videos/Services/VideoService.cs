@@ -1,5 +1,6 @@
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Repositories;
 
@@ -7,7 +8,8 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Services
 
 
 public class VideoService(
-    IVideoRepository videoRepository) : IVideoService {
+    IVideoRepository videoRepository, IStorageService storageService) : IVideoService {
+
 
     public async Task<Result<GetStatusVideoResponse>> getVideoById(Guid id, CancellationToken cancellationToken)
     {
@@ -26,15 +28,24 @@ public class VideoService(
     
     public async Task<Result<UploadVideoResponse>> upload(UploadVideoRequest request, CancellationToken cancellationToken)
     {
+        Guid id = Guid.NewGuid();
 
+        var upload = await storageService.UploadAsync(id, request.File.OpenReadStream(), request.File.ContentType);
         // chamar upload de video
         await videoRepository.AddAsync(new Video
         {
-            Id = Guid.NewGuid(),
+            Id = id,
             Status = VideoStatus.Processing,
             FileName = request.File?.FileName ?? throw new ArgumentNullException(nameof(request.File), "File cannot be null"),
-            FilePath = ""
+            FilePath = upload.Value
         }); 
+
+        var response = new UploadVideoResponse
+        {
+            Id = id,
+            Status = VideoStatus.Processing
+        };  
+        return Result<UploadVideoResponse>.Success(response);
     }
     
     public Task<Result<DownloadVideoZipResponse>> download(DownloadVideoZipRequest request, CancellationToken cancellationToken)

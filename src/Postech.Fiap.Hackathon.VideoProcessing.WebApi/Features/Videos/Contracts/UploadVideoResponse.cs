@@ -5,7 +5,7 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contract
 
 public class UploadVideoResponse
 {
-    public Guid id { get; set; }
-    public VideoStatus status { get; set; }
+    public Guid Id { get; set; }
+    public VideoStatus Status { get; set; }
 
 }
