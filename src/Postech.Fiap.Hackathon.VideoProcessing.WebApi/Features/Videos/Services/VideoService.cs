@@ -52,6 +52,11 @@ public class VideoService(
     {
         var video = await videoRepository.FindByIdAsync(request.id);
 
+        if (video == null)
+        {
+            return Result.Failure<DownloadVideoZipResponse>(Error.Failure("VideoService.DownloadVideoZipResponse", "Video not found"));
+        }
+
         var streamResult = await storageService.DowloadAsync(video.FilePath);
 
         if (!streamResult.IsSuccess)
