@@ -30,23 +30,25 @@ public class VideoService(
     public async Task<Result<UploadVideoResponse>> upload(UploadVideoRequest request,
         CancellationToken cancellationToken)
     {
-        Guid Id = Guid.NewGuid();
+        var Id = Guid.NewGuid();
 
         var upload = await storageService.UploadAsync(Id, request.File.OpenReadStream(), request.File.ContentType);
-        // chamar upload de video
-        await videoRepository.AddAsync(new Video
+
+        var newVideo = new Video
         {
             Id = Id,
             Status = VideoStatus.Processing,
-            FileName = request.File?.FileName ??
-                       throw new ArgumentNullException(nameof(request.File), "File cannot be null"),
+            FileName = request.File?.FileName,
             FilePath = upload.Value
-        });
+        };
+
+        // chamar upload de video
+        await videoRepository.AddAsync(newVideo);
 
         var response = new UploadVideoResponse
         {
-            Id = Id,
-            Status = VideoStatus.Processing
+            Id = newVideo.Id,
+            Status = newVideo.Status
         };
         return Result.Success(response);
     }
