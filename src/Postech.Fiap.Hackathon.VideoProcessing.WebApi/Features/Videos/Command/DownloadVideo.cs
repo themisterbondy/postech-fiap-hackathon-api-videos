@@ -1,6 +1,6 @@
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
-using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Services;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 
 namespace Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 
@@ -21,7 +21,6 @@ public abstract class DownloadVideo
             if (result.IsFailure)
             {
                 return Result.Failure<DownloadVideoZipResponse>(Error.Failure("DownloadVideoHandler", "File Error"));
-                ;
             }
 
             return Result.Success(new DownloadVideoZipResponse(result.Value.File, result.Value.ContentType,

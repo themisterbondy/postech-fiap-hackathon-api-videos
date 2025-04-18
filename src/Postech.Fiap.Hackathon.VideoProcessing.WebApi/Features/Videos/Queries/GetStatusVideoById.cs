@@ -1,7 +1,6 @@
-
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
-using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Services;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Queries;
 

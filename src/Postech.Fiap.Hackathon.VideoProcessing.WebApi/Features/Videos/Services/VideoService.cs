@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Identity;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Authentication.Models;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;
@@ -8,7 +10,11 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Services
 
 public class VideoService(
     IVideoRepository videoRepository,
-    IStorageService storageService) : IVideoService
+    IStorageService storageService,
+    IVideoQueueMessenger queueMessenger,
+    UserManager<User> userManager,
+    IHttpContextAccessor httpContextAccessor
+) : IVideoService
 {
     public async Task<Result<GetStatusVideoResponse>> getVideoById(Guid id, CancellationToken cancellationToken)
     {
@@ -34,16 +40,18 @@ public class VideoService(
 
         var upload = await storageService.UploadAsync(Id, request.File.OpenReadStream(), request.File.ContentType);
 
+        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+
         var newVideo = new Video
         {
             Id = Id,
-            Status = VideoStatus.Processing,
+            UserId = Guid.Parse(user.Id),
+            Status = VideoStatus.Uploaded,
             FileName = request.File?.FileName,
             FilePath = upload.Value,
             ThumbnailsInterval = request.ThumbnailsInterval
         };
 
-        // chamar upload de video
         await videoRepository.AddAsync(newVideo);
 
         var response = new UploadVideoResponse
@@ -51,13 +59,16 @@ public class VideoService(
             Id = newVideo.Id,
             Status = newVideo.Status
         };
+
+        await queueMessenger.SendAsync(Id);
+
         return Result.Success(response);
     }
 
-    public async Task<Result<DownloadVideoZipResponse>> download(DownloadVideoZipRequest request,
+    public async Task<Result<DownloadVideoZipResponse>> download(Guid id,
         CancellationToken cancellationToken)
     {
-        var video = await videoRepository.FindByIdAsync(request.Id);
+        var video = await videoRepository.FindByIdAsync(id);
 
         if (video == null)
         {
