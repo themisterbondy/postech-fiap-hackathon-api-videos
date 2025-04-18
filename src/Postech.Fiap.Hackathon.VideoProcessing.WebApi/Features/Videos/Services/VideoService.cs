@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Identity;
+using Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Authentication.Models;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
@@ -33,19 +34,20 @@ public class VideoService(
         return Result<GetStatusVideoResponse>.Success(response);
     }
 
-    public async Task<Result<UploadVideoResponse>> upload(UploadVideoRequest request,
+    public async Task<Result<UploadVideoResponse>> upload(UploadVideoCreate.Command request,
         CancellationToken cancellationToken)
     {
-        var Id = Guid.NewGuid();
-
-        var upload = await storageService.UploadAsync(Id, request.File.OpenReadStream(), request.File.ContentType);
-
+        var VideoId = Guid.NewGuid();
         var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+        var UserId = Guid.Parse(user.Id);
+
+        var upload =
+            await storageService.UploadAsync(VideoId, request.File.OpenReadStream(), request.File.ContentType);
 
         var newVideo = new Video
         {
-            Id = Id,
-            UserId = Guid.Parse(user.Id),
+            Id = VideoId,
+            UserId = UserId,
             Status = VideoStatus.Uploaded,
             FileName = request.File?.FileName,
             FilePath = upload.Value,
@@ -60,7 +62,7 @@ public class VideoService(
             Status = newVideo.Status
         };
 
-        await queueMessenger.SendAsync(Id);
+        await queueMessenger.SendAsync(VideoId);
 
         return Result.Success(response);
     }
@@ -94,7 +96,7 @@ public class VideoService(
         (
             streamResult.Value,
             "application/zip",
-            $"{video.FileName}.zip"
+            $"{id}.zip"
         );
     }
 }

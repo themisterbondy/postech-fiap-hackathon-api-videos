@@ -55,22 +55,23 @@ public class VideoEndpoints : ICarterModule
             .WithOpenApi();
 
         group.MapGet("/{id:Guid}/download",
-                async ([FromQuery] Guid Id, [FromServices] IMediator mediator) =>
+                async (Guid id, [FromServices] IMediator mediator) =>
                 {
                     var command = new DownloadVideo.Command
                     {
-                        Id = Id
+                        Id = id
                     };
 
                     var result = await mediator.Send(command);
 
                     return result.IsSuccess
-                        ? Results.Created($"/Video/{result.Value.FileName}", result.Value)
+                        ? Results.File(
+                            result.Value.File,
+                            result.Value.ContentType,
+                            result.Value.FileName)
                         : result.ToProblemDetails();
                 })
             .WithName("UploadVideo")
-            .Accepts<UploadVideoRequest>("application/json")
-            .Produces<UploadVideoResponse>(200)
             .WithTags("Video")
             .RequireAuthorization()
             .WithOpenApi();

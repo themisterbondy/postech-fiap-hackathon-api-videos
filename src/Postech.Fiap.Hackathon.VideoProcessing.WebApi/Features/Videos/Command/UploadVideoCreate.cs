@@ -8,7 +8,7 @@ public abstract class UploadVideoCreate
 {
     public class Command : IRequest<Result<UploadVideoResponse>>
     {
-        public int ThumbnailsInterval { get; set; } = 5;
+        public int ThumbnailsInterval { get; set; }
         public IFormFile? File { get; set; }
     }
 
@@ -17,13 +17,7 @@ public abstract class UploadVideoCreate
     {
         public async Task<Result<UploadVideoResponse>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var uploadRequest = new UploadVideoRequest
-            {
-                File = request.File
-            };
-
-            var response = await videoService.upload(uploadRequest, cancellationToken);
-
+            var response = await videoService.upload(request, cancellationToken);
             return Result.Success(response.Value);
         }
     }
