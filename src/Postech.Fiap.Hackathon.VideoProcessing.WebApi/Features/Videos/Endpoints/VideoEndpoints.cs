@@ -30,7 +30,7 @@ public class VideoEndpoints : ICarterModule
             })
             .WithName("GetStatusVideoById")
             .Produces<GetStatusVideoResponse>(200)
-            .WithTags("Products")
+            .WithTags("Video")
             .RequireAuthorization()
             .WithOpenApi();
 
@@ -51,7 +51,7 @@ public class VideoEndpoints : ICarterModule
           .WithName("CreateVideo")
             .Accepts<UploadVideoRequest>("application/zip")
           .Produces<UploadVideoResponse>(204)
-          .WithTags("Products")
+          .WithTags("Video")
           .RequireAuthorization()
           .WithOpenApi();
 
