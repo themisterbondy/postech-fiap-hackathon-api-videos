@@ -37,7 +37,8 @@ public class VideoEndpoints : ICarterModule
             {
                 var command = new UploadVideoCreate.Command
                 {
-                    File = request.File
+                    File = request.File,
+                    ThumbnailsInterval = request.ThumbnailsInterval
                 };
 
                 var result = await mediator.Send(command);
@@ -53,12 +54,12 @@ public class VideoEndpoints : ICarterModule
             .RequireAuthorization()
             .WithOpenApi();
 
-        group.MapGet("/download",
-                async ([FromBody] DownloadVideoZipRequest request, [FromServices] IMediator mediator) =>
+        group.MapGet("/{id:Guid}/download",
+                async ([FromQuery] Guid Id, [FromServices] IMediator mediator) =>
                 {
                     var command = new DownloadVideo.Command
                     {
-                        Id = request.Id
+                        Id = Id
                     };
 
                     var result = await mediator.Send(command);
