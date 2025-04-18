@@ -37,8 +37,7 @@ public class VideoEndpoints : ICarterModule
             {
                 var command = new UploadVideoCreate.Command
                 {
-                    File = request.File as FormFile ??
-                           throw new ArgumentNullException(nameof(request.File), "File cannot be null")
+                    File = request.File
                 };
 
                 var result = await mediator.Send(command);
