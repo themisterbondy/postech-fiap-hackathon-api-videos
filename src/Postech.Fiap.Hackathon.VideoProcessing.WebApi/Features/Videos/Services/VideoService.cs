@@ -16,7 +16,7 @@ public class VideoService(
         var video = await videoRepository.FindByIdAsync(id);
         if (video == null)
         {
-            return Result.Failure<GetStatusVideoResponse>( Error.Failure("VideService.getVideoById", "Video not found"));
+            return Result.Failure<GetStatusVideoResponse>( Error.Failure("VideoService.getVideoById", "Video not found"));
         }
         var response = new GetStatusVideoResponse
         {
@@ -48,12 +48,23 @@ public class VideoService(
         return Result<UploadVideoResponse>.Success(response);
     }
     
-    public Task<Result<DownloadVideoZipResponse>> download(DownloadVideoZipRequest request, CancellationToken cancellationToken)
+    public async Task<Result<DownloadVideoZipResponse>> download(DownloadVideoZipRequest request, CancellationToken cancellationToken)
     {
-        // Implement the logic to download a video as a zip
-        throw new NotImplementedException();
-    }
+        var video = await videoRepository.FindByIdAsync(request.id);
 
+        var streamResult = await storageService.DowloadAsync(video.FilePath);
 
+        if (!streamResult.IsSuccess)
+        {
+            return Result.Failure<DownloadVideoZipResponse>( Error.Failure("VideoService.DownloadVideoZipResponse", "Download with error"));
+        }
 
+        return new DownloadVideoZipResponse
+        {
+            File = streamResult.Value,
+            ContentType = "application/zip",
+            FileName = $"{video.FileName}.zip"
+        };  
+
+    }   
 }

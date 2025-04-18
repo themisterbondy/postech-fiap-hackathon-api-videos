@@ -29,4 +29,39 @@ public class StorageService(CloudBlobContainer container) : IStorageService
             return Result.Failure<string>(Error.Failure(errorCode, ex.Message));
         }
     }
+
+    public async Task<Result<Stream>> DowloadAsync(string FilePath)
+    {
+        if (string.IsNullOrEmpty(FilePath))
+        {
+            return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", "File path cannot be null or empty"));
+        }
+
+        try
+        {
+            var blob = container.GetBlockBlobReference(FilePath);
+            if (await blob.ExistsAsync())
+            {
+                var stream = new MemoryStream();
+                await blob.DownloadToStreamAsync(stream);
+                stream.Position = 0; // Reset the stream position to the beginning
+                return Result.Success((Stream)stream);
+            }
+            else
+            {
+                return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", "File not found"));
+            }
+
+        }
+        catch (RequestFailedException ex)
+        {
+            return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", ex.Message));
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", ex.Message));
+        }
+
+    }
+
 }
