@@ -24,10 +24,17 @@ public class VideoService(
         return Result<GetStatusVideoResponse>.Success(response);
     }
     
-    public Task<Result<UploadVideoResponse>> upload(UploadVideoRequest request, CancellationToken cancellationToken)
+    public async Task<Result<UploadVideoResponse>> upload(UploadVideoRequest request, CancellationToken cancellationToken)
     {
-        // Implement the logic to upload a video
-        throw new NotImplementedException();
+
+        // chamar upload de video
+        await videoRepository.AddAsync(new Video
+        {
+            Id = Guid.NewGuid(),
+            Status = VideoStatus.Processing,
+            FileName = request.File?.FileName ?? throw new ArgumentNullException(nameof(request.File), "File cannot be null"),
+            FilePath = ""
+        }); 
     }
     
     public Task<Result<DownloadVideoZipResponse>> download(DownloadVideoZipRequest request, CancellationToken cancellationToken)
