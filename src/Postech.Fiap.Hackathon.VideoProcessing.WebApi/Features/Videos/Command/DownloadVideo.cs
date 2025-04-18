@@ -20,7 +20,7 @@ public abstract class DownloadVideo
 
             if (result.IsFailure)
             {
-                return Result.Failure<DownloadVideoZipResponse>(Error.Failure("DownloadVideoHandler", "File Error"));
+                return Result.Failure<DownloadVideoZipResponse>(result.Error);
             }
 
             return Result.Success(new DownloadVideoZipResponse(result.Value.File, result.Value.ContentType,

@@ -20,8 +20,15 @@ public class VideoService(
     public async Task<Result<GetStatusVideoResponse>> getVideoById(Guid videoId, CancellationToken cancellationToken)
     {
         var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+
+        if (user is null)
+            return Result.Failure<GetStatusVideoResponse>(Error.Failure("VideoService.UploadVideo",
+                "User not found"));
+
         var UserId = Guid.Parse(user.Id);
+
         var video = await videoRepository.FindByIdAsync(videoId, UserId);
+
         if (video == null)
         {
             return Result.Failure<GetStatusVideoResponse>(Error.Failure("VideoService.getVideoById",
@@ -33,6 +40,7 @@ public class VideoService(
             Id = video.Id,
             Status = video.Status
         };
+
         return Result<GetStatusVideoResponse>.Success(response);
     }
 
@@ -41,10 +49,19 @@ public class VideoService(
     {
         var VideoId = Guid.NewGuid();
         var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+
+        if (user is null)
+            return Result.Failure<UploadVideoResponse>(Error.Failure("VideoService.UploadVideo",
+                "User not found"));
+
         var UserId = Guid.Parse(user.Id);
 
         var upload =
             await storageService.UploadAsync(VideoId, request.File.OpenReadStream(), request.File.ContentType);
+
+        if (!upload.IsSuccess)
+            return Result.Failure<UploadVideoResponse>(Error.Failure("VideoService.UploadVideo",
+                "Upload with error"));
 
         var newVideo = new Video
         {
@@ -99,7 +116,7 @@ public class VideoService(
         return new DownloadVideoZipResponse
         (
             streamResult.Value,
-            "application/zip",
+            "application/x-zip-compressed",
             $"{VideoId}.zip"
         );
     }
