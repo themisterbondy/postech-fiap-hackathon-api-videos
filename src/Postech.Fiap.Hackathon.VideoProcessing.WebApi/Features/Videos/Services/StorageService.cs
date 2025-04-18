@@ -3,7 +3,7 @@ using Microsoft.Azure.Storage.Blob;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 
-namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Queue;
+namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Services;
 
 public class StorageService(CloudBlobContainer container) : IStorageService
 {
@@ -34,7 +34,8 @@ public class StorageService(CloudBlobContainer container) : IStorageService
     {
         if (string.IsNullOrEmpty(FilePath))
         {
-            return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", "File path cannot be null or empty"));
+            return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync",
+                "File path cannot be null or empty"));
         }
 
         try
@@ -51,7 +52,6 @@ public class StorageService(CloudBlobContainer container) : IStorageService
             {
                 return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", "File not found"));
             }
-
         }
         catch (RequestFailedException ex)
         {
@@ -61,7 +61,5 @@ public class StorageService(CloudBlobContainer container) : IStorageService
         {
             return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", ex.Message));
         }
-
     }
-
 }
