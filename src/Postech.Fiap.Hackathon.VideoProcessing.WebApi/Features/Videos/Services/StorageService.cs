@@ -18,7 +18,7 @@ public class StorageService(CloudBlobContainer container) : IStorageService
 
             await blob.UploadFromStreamAsync(videoStream);
 
-            return blob.Uri.ToString();
+            return blobName;
         }
         catch (RequestFailedException ex)
         {
