@@ -16,6 +16,8 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.Behavior;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Authentication.Models;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Queue;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Repositories;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Services;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence;
 using Serilog;
 using Serilog.Events;
@@ -83,6 +85,8 @@ public static class DependencyInjection
         });
 
         services.AddScoped<IVideoQueueMessenger, VideoQueueMessenger>();
+        services.AddScoped<IVideoService, VideoService>();
+        services.AddScoped<IVideoRepository, VideoRepository>();
 
         return services;
     }
