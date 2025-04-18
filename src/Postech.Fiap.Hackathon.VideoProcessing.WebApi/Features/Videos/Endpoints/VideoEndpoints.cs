@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.Extensions;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Queries;
 
@@ -27,10 +29,30 @@ public class VideoEndpoints : ICarterModule
           })
           .WithName("GetStatusVideoById")
           .Produces<GetStatusVideoResponse>(200)
-          .WithTags("Products")
+          .WithTags("Video")
+          .RequireAuthorization()
           .WithOpenApi();
+
+
+        group.MapPost("/upload", async ([FromBody] UploadVideoRequest request, [FromServices] IMediator mediator) =>
+            {
+                var command = new UploadVideoCreate.Command
+                {
+                    File = request.File
+                };
+
+                var result = await mediator.Send(command);
+
+                return result.IsSuccess
+                    ? Results.Created($"/api/videos/{result.Value.Id}", result.Value)
+                    : result.ToProblemDetails();
+            })
+            .WithName("UploadVideo")
+            .Accepts<UploadVideoRequest>("application/json")
+            .Produces<UploadVideoResponse>(201)
+            .WithTags("Video")
+            .RequireAuthorization()
+            .WithOpenApi();
+
     }
-
-
-
 }

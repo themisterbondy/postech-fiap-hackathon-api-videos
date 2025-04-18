@@ -2,5 +2,6 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contract
 
 public class UploadVideoRequest
 {
+    public int ThumbnailsInterval { get; set; } = 5;
     public IFormFile? File { get; set; }
 }
