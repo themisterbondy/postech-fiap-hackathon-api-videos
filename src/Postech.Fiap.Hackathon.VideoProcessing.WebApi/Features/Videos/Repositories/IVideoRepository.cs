@@ -4,6 +4,6 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Reposito
 
 public interface IVideoRepository
 {
-    Task<Video?> FindByIdAsync(Guid id);
+    Task<Video?> FindByIdAsync(Guid videoId, Guid userId);
     Task AddAsync(Video video);
 }

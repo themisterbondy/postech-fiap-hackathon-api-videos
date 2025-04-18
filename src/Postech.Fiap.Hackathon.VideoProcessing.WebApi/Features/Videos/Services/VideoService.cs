@@ -17,9 +17,11 @@ public class VideoService(
     IHttpContextAccessor httpContextAccessor
 ) : IVideoService
 {
-    public async Task<Result<GetStatusVideoResponse>> getVideoById(Guid id, CancellationToken cancellationToken)
+    public async Task<Result<GetStatusVideoResponse>> getVideoById(Guid videoId, CancellationToken cancellationToken)
     {
-        var video = await videoRepository.FindByIdAsync(id);
+        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+        var UserId = Guid.Parse(user.Id);
+        var video = await videoRepository.FindByIdAsync(videoId, UserId);
         if (video == null)
         {
             return Result.Failure<GetStatusVideoResponse>(Error.Failure("VideoService.getVideoById",
@@ -67,10 +69,12 @@ public class VideoService(
         return Result.Success(response);
     }
 
-    public async Task<Result<DownloadVideoZipResponse>> download(Guid id,
-        CancellationToken cancellationToken)
+    public async Task<Result<DownloadVideoZipResponse>> download(Guid VideoId, CancellationToken cancellationToken)
     {
-        var video = await videoRepository.FindByIdAsync(id);
+        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+        var UserId = Guid.Parse(user.Id);
+
+        var video = await videoRepository.FindByIdAsync(VideoId, UserId);
 
         if (video == null)
         {
@@ -96,7 +100,7 @@ public class VideoService(
         (
             streamResult.Value,
             "application/zip",
-            $"{id}.zip"
+            $"{VideoId}.zip"
         );
     }
 }
