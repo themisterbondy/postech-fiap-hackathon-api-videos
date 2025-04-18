@@ -1,10 +1,10 @@
-using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Entities;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
 
 public class GetStatusVideoResponse
 {
-    public Guid id { get; set; }
-    public VideoStatus status { get; set; }
+    public Guid Id { get; set; }
+    public VideoStatus Status { get; set; }
 
 }

@@ -1,4 +1,5 @@
-using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Entities;
+
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
 
