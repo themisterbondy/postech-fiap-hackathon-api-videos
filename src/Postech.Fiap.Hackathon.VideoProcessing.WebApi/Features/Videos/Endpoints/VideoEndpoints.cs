@@ -15,44 +15,22 @@ public class VideoEndpoints : ICarterModule
         var group = app.MapGroup("/api/videos");
 
         group.MapGet("/{id:Guid}", async (Guid id, [FromServices] IMediator mediator) =>
-          {
-              var query = new GetStatusVideoById.Query
-              {
-                  Id = id
-              };
-
-              var result = await mediator.Send(query);
-
-              return result.IsSuccess
-                  ? Results.Ok(result.Value)
-                  : result.ToProblemDetails();
-          })
-          .WithName("GetStatusVideoById")
-          .Produces<GetStatusVideoResponse>(200)
-          .WithTags("Video")
-          .RequireAuthorization()
-          .WithOpenApi();
-
-
-        group.MapPost("/upload", async ([FromBody] UploadVideoRequest request, [FromServices] IMediator mediator) =>
             {
-                var command = new UploadVideoCreate.Command
+                var query = new GetStatusVideoById.Query
                 {
-                    File = request.File
+                    Id = id
                 };
 
-                var result = await mediator.Send(command);
+                var result = await mediator.Send(query);
 
                 return result.IsSuccess
-                    ? Results.Created($"/api/videos/{result.Value.Id}", result.Value)
+                    ? Results.Ok(result.Value)
                     : result.ToProblemDetails();
             })
-            .WithName("UploadVideo")
-            .Accepts<UploadVideoRequest>("application/json")
-            .Produces<UploadVideoResponse>(201)
-            .WithTags("Video")
+            .WithName("GetStatusVideoById")
+            .Produces<GetStatusVideoResponse>(200)
+            .WithTags("Products")
             .RequireAuthorization()
             .WithOpenApi();
-
     }
 }
