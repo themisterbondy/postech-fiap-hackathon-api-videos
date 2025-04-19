@@ -35,7 +35,7 @@ public class VideoEndpoints : ICarterModule
 
         group.MapPost("/upload", async ([FromForm] UploadVideoRequest request, [FromServices] IMediator mediator) =>
             {
-                var command = new UploadVideoCreate.Command
+                var command = new UploadVideoCommand.Command
                 {
                     File = request.File,
                     ThumbnailsInterval = request.ThumbnailsInterval
@@ -57,7 +57,7 @@ public class VideoEndpoints : ICarterModule
         group.MapGet("/{id:Guid}/download",
                 async (Guid id, [FromServices] IMediator mediator) =>
                 {
-                    var command = new DownloadVideo.Command
+                    var command = new DownloadVideoCommand.Command
                     {
                         Id = id
                     };

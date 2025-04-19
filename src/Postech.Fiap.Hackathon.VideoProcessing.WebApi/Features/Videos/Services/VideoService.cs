@@ -19,7 +19,7 @@ public class VideoService(
 {
     public async Task<Result<GetStatusVideoResponse>> getVideoById(Guid videoId, CancellationToken cancellationToken)
     {
-        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext!.User);
 
         if (user is null)
             return Result.Failure<GetStatusVideoResponse>(Error.Failure("VideoService.UploadVideo",
@@ -41,13 +41,13 @@ public class VideoService(
             Status = video.Status
         };
 
-        return Result<GetStatusVideoResponse>.Success(response);
+        return Result.Success(response);
     }
 
-    public async Task<Result<UploadVideoResponse>> upload(UploadVideoCreate.Command request,
+    public async Task<Result<UploadVideoResponse>> upload(UploadVideoCommand.Command request,
         CancellationToken cancellationToken)
     {
-        var VideoId = Guid.NewGuid();
+        var videoId = Guid.NewGuid();
         var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
 
         if (user is null)
@@ -57,7 +57,8 @@ public class VideoService(
         var UserId = Guid.Parse(user.Id);
 
         var upload =
-            await storageService.UploadAsync(VideoId, request.File.OpenReadStream(), request.File.ContentType);
+            await storageService.UploadVideoAsync(videoId, request.File.OpenReadStream(), request.File.ContentType,
+                cancellationToken);
 
         if (!upload.IsSuccess)
             return Result.Failure<UploadVideoResponse>(Error.Failure("VideoService.UploadVideo",
@@ -65,7 +66,7 @@ public class VideoService(
 
         var newVideo = new Video
         {
-            Id = VideoId,
+            Id = videoId,
             UserId = UserId,
             Status = VideoStatus.Uploaded,
             FileName = request.File?.FileName,
@@ -81,17 +82,17 @@ public class VideoService(
             Status = newVideo.Status
         };
 
-        await queueMessenger.SendAsync(VideoId);
+        await queueMessenger.SendAsync(videoId);
 
         return Result.Success(response);
     }
 
-    public async Task<Result<DownloadVideoZipResponse>> download(Guid VideoId, CancellationToken cancellationToken)
+    public async Task<Result<DownloadVideoZipResponse>> download(Guid videoId, CancellationToken cancellationToken)
     {
-        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
-        var UserId = Guid.Parse(user.Id);
+        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext!.User);
+        var userId = Guid.Parse(user!.Id);
 
-        var video = await videoRepository.FindByIdAsync(VideoId, UserId);
+        var video = await videoRepository.FindByIdAsync(videoId, userId);
 
         if (video == null)
         {
@@ -105,7 +106,7 @@ public class VideoService(
                 "File path is null or empty"));
         }
 
-        var streamResult = await storageService.DowloadAsync(video.ThumbnailsZipPath);
+        var streamResult = await storageService.DownloadVideoAsync(video.ThumbnailsZipPath, cancellationToken);
 
         if (!streamResult.IsSuccess)
         {
@@ -117,7 +118,7 @@ public class VideoService(
         (
             streamResult.Value,
             "application/x-zip-compressed",
-            $"{VideoId}.zip"
+            $"{videoId}.zip"
         );
     }
 }

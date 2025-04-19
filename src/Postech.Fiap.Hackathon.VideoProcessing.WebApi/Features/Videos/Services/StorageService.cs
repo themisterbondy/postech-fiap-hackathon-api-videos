@@ -7,7 +7,8 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Services
 
 public class StorageService(CloudBlobContainer container) : IStorageService
 {
-    public async Task<Result<string>> UploadAsync(Guid videoId, Stream videoStream, string contentType)
+    public async Task<Result<string>> UploadVideoAsync(Guid videoId, Stream videoStream, string contentType,
+        CancellationToken cancellationToken)
     {
         const string errorCode = "StorageService.UploadAsync";
         try
@@ -16,7 +17,7 @@ public class StorageService(CloudBlobContainer container) : IStorageService
             var blob = container.GetBlockBlobReference(blobName);
             blob.Properties.ContentType = contentType;
 
-            await blob.UploadFromStreamAsync(videoStream);
+            await blob.UploadFromStreamAsync(videoStream, cancellationToken);
 
             return blobName;
         }
@@ -30,36 +31,37 @@ public class StorageService(CloudBlobContainer container) : IStorageService
         }
     }
 
-    public async Task<Result<Stream>> DowloadAsync(string FilePath)
+    public async Task<Result<Stream>> DownloadVideoAsync(string filePath, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrEmpty(FilePath))
+        const string errorCode = "StorageService.DownloadVideoAsync";
+        if (string.IsNullOrEmpty(filePath))
         {
-            return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync",
+            return Result.Failure<Stream>(Error.Failure(errorCode,
                 "File path cannot be null or empty"));
         }
 
         try
         {
-            var blob = container.GetBlockBlobReference(FilePath);
-            if (await blob.ExistsAsync())
+            var blob = container.GetBlockBlobReference(filePath);
+            if (await blob.ExistsAsync(cancellationToken))
             {
                 var stream = new MemoryStream();
-                await blob.DownloadToStreamAsync(stream);
+                await blob.DownloadToStreamAsync(stream, cancellationToken);
                 stream.Position = 0; // Reset the stream position to the beginning
-                return Result.Success((Stream)stream);
+                return Result.Success<Stream>(stream);
             }
             else
             {
-                return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", "File not found"));
+                return Result.Failure<Stream>(Error.Failure(errorCode, "File not found"));
             }
         }
         catch (RequestFailedException ex)
         {
-            return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", ex.Message));
+            return Result.Failure<Stream>(Error.Failure(errorCode, ex.Message));
         }
         catch (Exception ex)
         {
-            return Result.Failure<Stream>(Error.Failure("StorageService.DowloadAsync", ex.Message));
+            return Result.Failure<Stream>(Error.Failure(errorCode, ex.Message));
         }
     }
 }

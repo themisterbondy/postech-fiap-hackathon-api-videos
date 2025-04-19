@@ -4,7 +4,7 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 
 namespace Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 
-public abstract class UploadVideoCreate
+public abstract class UploadVideoCommand
 {
     public class Command : IRequest<Result<UploadVideoResponse>>
     {
@@ -12,7 +12,7 @@ public abstract class UploadVideoCreate
         public IFormFile? File { get; set; }
     }
 
-    public class CreateVideotHandler(IVideoService videoService)
+    public class UploadVideoCommandHandler(IVideoService videoService)
         : IRequestHandler<Command, Result<UploadVideoResponse>>
     {
         public async Task<Result<UploadVideoResponse>> Handle(Command request, CancellationToken cancellationToken)

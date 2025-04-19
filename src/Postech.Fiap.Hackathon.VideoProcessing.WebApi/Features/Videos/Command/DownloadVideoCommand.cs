@@ -4,14 +4,14 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 
 namespace Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 
-public abstract class DownloadVideo
+public abstract class DownloadVideoCommand
 {
     public class Command : IRequest<Result<DownloadVideoZipResponse>>
     {
         public Guid Id { get; set; }
     }
 
-    public class DownloadVideoHandler(IVideoService videoService)
+    public class DownloadVideoCommandHandler(IVideoService videoService)
         : IRequestHandler<Command, Result<DownloadVideoZipResponse>>
     {
         public async Task<Result<DownloadVideoZipResponse>> Handle(Command request, CancellationToken cancellationToken)

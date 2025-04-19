@@ -8,7 +8,7 @@ public interface IVideoService
 {
     Task<Result<GetStatusVideoResponse>> getVideoById(Guid videoId, CancellationToken cancellationToken);
 
-    Task<Result<UploadVideoResponse>> upload(UploadVideoCreate.Command request, CancellationToken cancellationToken);
+    Task<Result<UploadVideoResponse>> upload(UploadVideoCommand.Command request, CancellationToken cancellationToken);
 
     Task<Result<DownloadVideoZipResponse>> download(Guid videoId, CancellationToken cancellationToken);
 }

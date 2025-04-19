@@ -4,6 +4,8 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfac
 
 public interface IStorageService
 {
-    Task<Result<string>> UploadAsync(Guid videoId, Stream videoStream, string contentType);
-    Task<Result<Stream>> DowloadAsync(string FilePath);
+    Task<Result<string>> UploadVideoAsync(Guid videoId, Stream videoStream, string contentType,
+        CancellationToken cancellationToken);
+
+    Task<Result<Stream>> DownloadVideoAsync(string filePath, CancellationToken cancellationToken);
 }
