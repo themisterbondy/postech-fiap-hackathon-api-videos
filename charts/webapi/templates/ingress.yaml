@@ -29,7 +29,7 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.className | default "nginx" }}
   rules:
-    - host: fiap-hackathon-webapi.com.br
+    - host: fiap-hackathon-api.eastus.cloudapp.azure.com
       http:
         paths:
           - path: /
