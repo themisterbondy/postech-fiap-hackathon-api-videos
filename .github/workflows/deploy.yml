@@ -55,7 +55,7 @@ jobs:
 
       - name: 🧪 Rodar testes
         run: |
-          dotnet test ${{ env.TEST_PROJECT }} --configuration Release --no-build --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+          dotnet test ${{ env.TEST_PROJECT }} --configuration Release --no-build
 
       - name: 🏷️ Definir tag da imagem Docker (SHA curto)
         id: docker_tag
