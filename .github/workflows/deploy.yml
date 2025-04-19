@@ -95,11 +95,6 @@ jobs:
       - name: 📦 Instalar o Helm
         uses: azure/setup-helm@v3
 
-      - name: 🔐 Aplicar ConfigMap do Secret
-        run: |
-          echo "${{ secrets.CONFIG_MAP_YAML }}" > config.yaml
-          kubectl apply -f config.yaml
-
       - name: 🚀 Deploy da API no Kubernetes
         run: |
           helm upgrade --install ${{ env.DOCKER_IMAGE_NAME }} ${{ env.HELM_CHART_PATH }} \
