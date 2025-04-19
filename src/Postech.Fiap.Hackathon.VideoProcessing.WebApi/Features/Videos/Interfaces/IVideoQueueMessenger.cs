@@ -2,5 +2,5 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfac
 
 public interface IVideoQueueMessenger
 {
-    Task SendAsync(Guid VideoId);
+    Task SendAsync(Guid videoId);
 }

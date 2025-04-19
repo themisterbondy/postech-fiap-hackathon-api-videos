@@ -17,7 +17,7 @@ public abstract class UploadVideoCommand
     {
         public async Task<Result<UploadVideoResponse>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var response = await videoService.upload(request, cancellationToken);
+            var response = await videoService.Upload(request, cancellationToken);
             return Result.Success(response.Value);
         }
     }

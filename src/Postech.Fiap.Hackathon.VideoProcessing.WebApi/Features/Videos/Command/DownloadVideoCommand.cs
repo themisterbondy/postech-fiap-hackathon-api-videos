@@ -16,7 +16,7 @@ public abstract class DownloadVideoCommand
     {
         public async Task<Result<DownloadVideoZipResponse>> Handle(Command request, CancellationToken cancellationToken)
         {
-            var result = await videoService.download(request.Id, cancellationToken);
+            var result = await videoService.Download(request.Id, cancellationToken);
 
             if (result.IsFailure)
             {

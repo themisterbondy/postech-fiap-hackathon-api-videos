@@ -27,7 +27,7 @@ public class VideoEndpoints : ICarterModule
                     : result.ToProblemDetails();
             })
             .WithName("GetStatusVideoById")
-            .Produces<GetStatusVideoResponse>(200)
+            .Produces<GetStatusVideoResponse>()
             .WithTags("Video")
             .RequireAuthorization()
             .WithOpenApi();

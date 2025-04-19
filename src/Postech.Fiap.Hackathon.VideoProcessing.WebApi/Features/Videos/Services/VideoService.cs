@@ -17,7 +17,7 @@ public class VideoService(
     IHttpContextAccessor httpContextAccessor
 ) : IVideoService
 {
-    public async Task<Result<GetStatusVideoResponse>> getVideoById(Guid videoId, CancellationToken cancellationToken)
+    public async Task<Result<GetStatusVideoResponse>> GetVideoById(Guid videoId, CancellationToken cancellationToken)
     {
         var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext!.User);
 
@@ -25,9 +25,9 @@ public class VideoService(
             return Result.Failure<GetStatusVideoResponse>(Error.Failure("VideoService.UploadVideo",
                 "User not found"));
 
-        var UserId = Guid.Parse(user.Id);
+        var userId = Guid.Parse(user.Id);
 
-        var video = await videoRepository.FindByIdAsync(videoId, UserId);
+        var video = await videoRepository.FindByIdAsync(videoId, userId);
 
         if (video == null)
         {
@@ -44,20 +44,20 @@ public class VideoService(
         return Result.Success(response);
     }
 
-    public async Task<Result<UploadVideoResponse>> upload(UploadVideoCommand.Command request,
+    public async Task<Result<UploadVideoResponse>> Upload(UploadVideoCommand.Command request,
         CancellationToken cancellationToken)
     {
         var videoId = Guid.NewGuid();
-        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext.User);
+        var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext!.User);
 
         if (user is null)
             return Result.Failure<UploadVideoResponse>(Error.Failure("VideoService.UploadVideo",
                 "User not found"));
 
-        var UserId = Guid.Parse(user.Id);
+        var userId = Guid.Parse(user.Id);
 
         var upload =
-            await storageService.UploadVideoAsync(videoId, request.File.OpenReadStream(), request.File.ContentType,
+            await storageService.UploadVideoAsync(videoId, request.File!.OpenReadStream(), request.File.ContentType,
                 cancellationToken);
 
         if (!upload.IsSuccess)
@@ -67,7 +67,7 @@ public class VideoService(
         var newVideo = new Video
         {
             Id = videoId,
-            UserId = UserId,
+            UserId = userId,
             Status = VideoStatus.Uploaded,
             FileName = request.File?.FileName,
             FilePath = upload.Value,
@@ -87,7 +87,7 @@ public class VideoService(
         return Result.Success(response);
     }
 
-    public async Task<Result<DownloadVideoZipResponse>> download(Guid videoId, CancellationToken cancellationToken)
+    public async Task<Result<DownloadVideoZipResponse>> Download(Guid videoId, CancellationToken cancellationToken)
     {
         var user = await userManager.GetUserAsync(httpContextAccessor.HttpContext!.User);
         var userId = Guid.Parse(user!.Id);
