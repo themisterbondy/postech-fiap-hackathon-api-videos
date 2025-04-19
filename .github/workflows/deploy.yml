@@ -27,7 +27,7 @@ env:
 
   # Configurações do Kubernetes
   RESOURCE_GROUP: 'rg-fiap-hackathon'
-  CLUSTER_NAME: 'fiap-hackathon-aks'
+  CLUSTER_NAME: 'fiap-hackathon-k8s-cluster'
   K8S_NAMESPACE: 'fiap-hackathon'
   HELM_CHART_PATH: './charts/webapi/'
 
