@@ -4,6 +4,7 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence.Configurations;
 
+[ExcludeFromCodeCoverage]
 public class VideoConfiguration : IEntityTypeConfiguration<Video>
 {
     public void Configure(EntityTypeBuilder<Video> builder)

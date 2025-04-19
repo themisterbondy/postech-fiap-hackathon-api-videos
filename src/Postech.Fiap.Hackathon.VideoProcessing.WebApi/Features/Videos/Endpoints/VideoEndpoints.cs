@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.Extensions;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Queries;
 

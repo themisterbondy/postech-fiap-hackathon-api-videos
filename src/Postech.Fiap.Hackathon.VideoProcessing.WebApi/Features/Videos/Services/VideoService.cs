@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
-using Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Authentication.Models;
+using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;

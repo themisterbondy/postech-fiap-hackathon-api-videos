@@ -5,6 +5,7 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence;
 
+[ExcludeFromCodeCoverage]
 public class ApplicationDbContext : IdentityDbContext<User>
 {
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)

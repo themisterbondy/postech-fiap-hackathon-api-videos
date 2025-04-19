@@ -47,7 +47,7 @@ public class StorageService(CloudBlobContainer container) : IStorageService
             {
                 var stream = new MemoryStream();
                 await blob.DownloadToStreamAsync(stream, cancellationToken);
-                stream.Position = 0; // Reset the stream position to the beginning
+                stream.Position = 0;
                 return Result.Success<Stream>(stream);
             }
             else

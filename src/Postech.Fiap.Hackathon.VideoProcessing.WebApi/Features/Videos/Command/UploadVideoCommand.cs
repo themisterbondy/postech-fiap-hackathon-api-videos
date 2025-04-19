@@ -2,7 +2,7 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Common.ResultPattern;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Contracts;
 using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Interfaces;
 
-namespace Namespace.Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
+namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Command;
 
 public abstract class UploadVideoCommand
 {

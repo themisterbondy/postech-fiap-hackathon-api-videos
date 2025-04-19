@@ -47,3 +47,6 @@ app.MapGroup("/api/auth")
 app.MapCarter();
 
 app.Run();
+
+[ExcludeFromCodeCoverage]
+public partial class Program;
