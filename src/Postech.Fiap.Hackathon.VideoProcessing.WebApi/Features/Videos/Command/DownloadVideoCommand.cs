@@ -17,14 +17,10 @@ public abstract class DownloadVideoCommand
         public async Task<Result<DownloadVideoZipResponse>> Handle(Command request, CancellationToken cancellationToken)
         {
             var result = await videoService.Download(request.Id, cancellationToken);
-
-            if (result.IsFailure)
-            {
-                return Result.Failure<DownloadVideoZipResponse>(result.Error);
-            }
-
-            return Result.Success(new DownloadVideoZipResponse(result.Value.File, result.Value.ContentType,
-                result.Value.FileName));
+            return result.IsFailure
+                ? Result.Failure<DownloadVideoZipResponse>(result.Error)
+                : Result.Success(new DownloadVideoZipResponse(result.Value.File, result.Value.ContentType,
+                    result.Value.FileName));
         }
     }
 }
