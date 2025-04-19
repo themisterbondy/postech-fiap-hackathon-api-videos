@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Fiap.Hackathon.Vide
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{FE3681E7-0B2C-413B-854A-B7B61ECE37EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Fiap.Hackathon.VideoProcessing.WebApi.UnitsTests", "Postech.Fiap.Hackathon.VideoProcessing.WebApi.UnitsTests\Postech.Fiap.Hackathon.VideoProcessing.WebApi.UnitsTests.csproj", "{87ECDD61-288A-49F5-A8B2-CE5E718DDDF5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Postech.Fiap.Hackathon.VideoProcessing.WebApi.UnitsTests", "tests/Postech.Fiap.Hackathon.VideoProcessing.WebApi.UnitsTests\Postech.Fiap.Hackathon.VideoProcessing.WebApi.UnitsTests.csproj", "{87ECDD61-288A-49F5-A8B2-CE5E718DDDF5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
