@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
 using FluentValidation;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.Storage;
@@ -83,6 +84,12 @@ public static class DependencyInjection
 
             return queue;
         });
+
+        services.Configure<FormOptions>(options =>
+        {
+            options.MultipartBodyLengthLimit = 500 * 1024 * 1024; // 500 MB
+        });
+
 
         services.AddScoped<IVideoQueueMessenger, VideoQueueMessenger>();
         services.AddScoped<IVideoService, VideoService>();

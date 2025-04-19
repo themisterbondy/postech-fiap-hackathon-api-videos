@@ -13,6 +13,14 @@ builder.Services
     .AddWebApi(configuration)
     .AddSerilogConfiguration(builder, configuration);
 
+long.TryParse(configuration["MultipartBodyLengthLimit"], out var MultipartBodyLengthLimit);
+
+
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = MultipartBodyLengthLimit;
+});
+
 var app = builder.Build();
 
 app.ApplyMigrations();
@@ -27,6 +35,7 @@ app.UseAuthorization();
 
 app.UseSerilogRequestLogging();
 app.UseMiddleware<RequestContextLoggingMiddleware>();
+app.UseMiddleware<RequestTooLargeException>();
 
 app.UseHealthChecksConfiguration();
 
