@@ -55,7 +55,7 @@ ingress:
 hpa:
   enabled: true
   minReplicas: 1           # Mantém 1 réplica mínima
-  maxReplicas: 2           # Limita a 2 réplicas
+  maxReplicas: 5           # Limita a 2 réplicas
   cpuUtilization: 60       # Escala ao atingir 60% de uso de CPU
   memoryUtilization: 70    # Escala ao atingir 70% de uso de memória
 
@@ -66,13 +66,6 @@ resources:
   limits:
     cpu: "500m"            # Limita a 0.5 vCPU
     memory: "1G"        # Limita a 512 MB de memória
-
-autoscaling:
-  enabled: true
-  minReplicas: 2
-  maxReplicas: 10
-  targetCPUUtilizationPercentage: 50
-  targetMemoryUtilizationPercentage: 80
 
 nodeSelector: { }
 
