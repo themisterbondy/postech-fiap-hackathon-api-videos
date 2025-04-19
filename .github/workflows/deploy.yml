@@ -18,7 +18,7 @@ env:
   SOLUTION_FILE: 'Postech.Fiap.Hackathon.VideoProcessing.WebApi.sln'
   TEST_PROJECT: 'tests/Postech.Fiap.Hackathon.VideoProcessing.WebApi.UnitsTests'
   DOCKERFILE_PATH: 'src/Postech.Fiap.Hackathon.VideoProcessing.WebApi/Dockerfile'
-  DOCKER_IMAGE_NAME: 'postech-video-processing-webapi'
+  DOCKER_IMAGE_NAME: 'fiap-hackathon-webapi'
   COVERAGE_FILE: 'coverage.xml'
 
   # Configurações do Docker
