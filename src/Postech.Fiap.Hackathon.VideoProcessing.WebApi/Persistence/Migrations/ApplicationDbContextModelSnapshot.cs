@@ -10,6 +10,7 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence.Migrations
 {
+    [ExcludeFromCodeCoverage]
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
@@ -251,7 +252,6 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ThumbnailsZipPath")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 

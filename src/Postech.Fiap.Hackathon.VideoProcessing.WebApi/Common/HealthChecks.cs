@@ -11,7 +11,21 @@ public static class HealthChecks
     public static IServiceCollection AddUseHealthChecksConfiguration(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddHealthChecks();
+        services.AddHealthChecks()
+            .AddSqlServer(
+                name: "Azure SQL Server",
+                connectionString: configuration["ConnectionStrings:DefaultConnection"] ?? string.Empty,
+                tags: ["Azure", "SQL", "DB"])
+            .AddAzureBlobStorage(
+                name: "Azure Blob Storage",
+                connectionString: configuration["Azure:ConnectionString"] ?? string.Empty,
+                tags: ["Azure", "Blob"])
+            .AddAzureQueueStorage(
+                name: "Azure Queue Storage",
+                connectionString: configuration["Azure:ConnectionString"] ?? string.Empty,
+                queueName: configuration["Azure:Queue:Name"] ?? string.Empty,
+                tags: ["Azure", "Queue"]);
+
         return services;
     }
 

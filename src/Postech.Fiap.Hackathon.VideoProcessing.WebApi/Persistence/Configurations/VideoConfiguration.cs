@@ -4,6 +4,7 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Models;
 
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence.Configurations;
 
+[ExcludeFromCodeCoverage]
 public class VideoConfiguration : IEntityTypeConfiguration<Video>
 {
     public void Configure(EntityTypeBuilder<Video> builder)
@@ -30,7 +31,6 @@ public class VideoConfiguration : IEntityTypeConfiguration<Video>
             .IsRequired();
 
         builder.Property(v => v.ThumbnailsZipPath)
-            .IsRequired()
             .HasMaxLength(500);
 
         builder.Property(v => v.Status)

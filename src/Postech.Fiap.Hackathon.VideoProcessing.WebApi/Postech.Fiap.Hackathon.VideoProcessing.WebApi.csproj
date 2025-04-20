@@ -8,6 +8,8 @@
     </PropertyGroup>
 
     <ItemGroup>
+        <PackageReference Include="AspNetCore.HealthChecks.AzureStorage" Version="7.0.0"/>
+        <PackageReference Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0"/>
         <PackageReference Include="Carter" Version="8.2.1"/>
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0"/>
         <PackageReference Include="MediatR" Version="12.4.1"/>

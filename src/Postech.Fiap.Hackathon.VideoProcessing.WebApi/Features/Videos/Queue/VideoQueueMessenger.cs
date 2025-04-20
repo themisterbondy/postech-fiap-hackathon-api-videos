@@ -5,9 +5,9 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Features.Videos.Queue;
 
 public class VideoQueueMessenger(CloudQueue queue) : IVideoQueueMessenger
 {
-    public async Task SendAsync(Guid VideoId)
+    public async Task SendAsync(Guid videoId)
     {
-        var message = new CloudQueueMessage(VideoId.ToString());
+        var message = new CloudQueueMessage(videoId.ToString());
         await queue.AddMessageAsync(message);
     }
 }

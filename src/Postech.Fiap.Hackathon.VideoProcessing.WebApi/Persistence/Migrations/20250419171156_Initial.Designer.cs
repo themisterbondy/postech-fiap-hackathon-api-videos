@@ -12,8 +12,8 @@ using Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence;
 namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250406164901_AddVideo")]
-    partial class AddVideo
+    [Migration("20250419171156_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -254,7 +254,6 @@ namespace Postech.Fiap.Hackathon.VideoProcessing.WebApi.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ThumbnailsZipPath")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
